@@ -1,7 +1,8 @@
 import os
 import logging
+import json
 
-from flask import Flask
+from flask import Flask, jsonify, request
 from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -13,28 +14,29 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 from models import Product
-from schemas import products_schema
+from schemas import products_schema, product_schema
 
 @app.route('/hello')
 def hello():
     return "Hello World!"
 
-@app.route('/products', , methods = ['GET','POST'])
+@app.route('/products', methods = ['GET','POST'])
 def products():
     if request.method == 'GET':
         products = db.session.query(Product).all() # SQLAlchemy request => 'SELECT * FROM products'
         return products_schema.jsonify(products), 200
 
     if request.method == 'POST':
-        pass
+        name = json.dumps(request.get_json())
+        return "Product created", 201
 
-    return "", 404
 
-@app.route('/products/<int:id>', , methods = ['GET', 'PATCH'])
-def products(id):
+
+@app.route('/products/<int:id>', methods = ['GET', 'PATCH'])
+def product(id):
     if request.method == 'GET':
         product = db.session.query(Product).get(id)
-        return products_schema.jsonify(product), 200
+        return product_schema.jsonify(product), 200
 
     if request.method == 'PATCH':
         pass
