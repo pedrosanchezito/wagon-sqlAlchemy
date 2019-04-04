@@ -37,7 +37,7 @@ def products():
             return "Product created", 201
         return "Invalid product name", 400
 
-@app.route('/products/<int:id>', methods = ['GET', 'PATCH'])
+@app.route('/products/<int:id>', methods = ['GET', 'PATCH', 'DELETE'])
 def product(id):
     if request.method == 'GET':
         product = db.session.query(Product).get(id)
@@ -45,5 +45,15 @@ def product(id):
 
     if request.method == 'PATCH':
         pass
+
+
+    if request.method == 'DELETE':
+        product = db.session.query(Product).get(id)
+        if product:
+            db.session.delete(product)
+            db.session.commit()
+            return "Product deleted", 202
+        return "Invalid product id", 400
+
 
     return "Product not found", 404
