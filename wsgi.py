@@ -27,10 +27,15 @@ def products():
         return products_schema.jsonify(products), 200
 
     if request.method == 'POST':
-        name = json.dumps(request.get_json())
-        return "Product created", 201
-
-
+        if 'name' in request.get_json():
+            product = Product()
+            product.name = request.get_json()['name']
+            if 'description' in request.get_json():
+                product.description = request.get_json()['description']
+            db.session.add(product)
+            db.session.commit()
+            return "Product created", 201
+        return "Invalid product name", 400
 
 @app.route('/products/<int:id>', methods = ['GET', 'PATCH'])
 def product(id):
