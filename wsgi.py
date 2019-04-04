@@ -44,8 +44,14 @@ def product(id):
         return product_schema.jsonify(product), 200
 
     if request.method == 'PATCH':
-        pass
-
+        product = db.session.query(Product).get(id)
+        if product:
+            if 'name' in request.get_json():
+                product.name = request.get_json()['name']
+            if 'description' in request.get_json():
+                product.description = request.get_json()['description']
+            db.session.commit()
+            return "Product updated", 201
 
     if request.method == 'DELETE':
         product = db.session.query(Product).get(id)
@@ -53,7 +59,5 @@ def product(id):
             db.session.delete(product)
             db.session.commit()
             return "Product deleted", 202
-        return "Invalid product id", 400
-
 
     return "Product not found", 404
