@@ -19,7 +19,24 @@ from schemas import products_schema
 def hello():
     return "Hello World!"
 
-@app.route('/products')
+@app.route('/products', , methods = ['GET','POST'])
 def products():
-    products = db.session.query(Product).all() # SQLAlchemy request => 'SELECT * FROM products'
-    return products_schema.jsonify(products)
+    if request.method == 'GET':
+        products = db.session.query(Product).all() # SQLAlchemy request => 'SELECT * FROM products'
+        return products_schema.jsonify(products), 200
+
+    if request.method == 'POST':
+        pass
+
+    return "", 404
+
+@app.route('/products/<int:id>', , methods = ['GET', 'PATCH'])
+def products(id):
+    if request.method == 'GET':
+        product = db.session.query(Product).get(id)
+        return products_schema.jsonify(product), 200
+
+    if request.method == 'PATCH':
+        pass
+
+    return "Product not found", 404
