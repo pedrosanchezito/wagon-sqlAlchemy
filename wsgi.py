@@ -16,6 +16,11 @@ ma = Marshmallow(app)
 from models import Product
 from schemas import products_schema, product_schema
 
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+admin = Admin(app, name='Back-office', template_mode='bootstrap3')
+admin.add_view(ModelView(Product, db.session)) # `Product` needs to be imported before
+
 @app.route('/')
 def hello():
     products = db.session.query(Product).all()
