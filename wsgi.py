@@ -2,7 +2,7 @@ import os
 import logging
 import json
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,9 +16,10 @@ ma = Marshmallow(app)
 from models import Product
 from schemas import products_schema, product_schema
 
-@app.route('/hello')
+@app.route('/')
 def hello():
-    return "Hello World!"
+    products = db.session.query(Product).all()
+    return render_template('home.html', products=products)
 
 @app.route('/products', methods = ['GET','POST'])
 def products():
@@ -41,7 +42,8 @@ def products():
 def product(id):
     if request.method == 'GET':
         product = db.session.query(Product).get(id)
-        return product_schema.jsonify(product), 200
+        return render_template('show.html', product=product)
+        #return product_schema.jsonify(product), 200
 
     if request.method == 'PATCH':
         pass
